@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  overflow-x: hidden;
+  background-color: #e2e4d9;
+  color: #1e293b;
+}
+
+/* Custom scrollbar for light mode */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f2ec;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.4);
+}
+
+/* Simple visual transitions */
+.tab-content-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+/* Classic serif style numbers inside cards */
+.serif-stat-number {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+/* Watermark styles matching the college dashboard screenshot */
+.card-watermark-icon {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 80px !important;
+  color: rgba(0, 0, 0, 0.03);
+  pointer-events: none;
+}
