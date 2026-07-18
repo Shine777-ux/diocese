@@ -537,7 +537,11 @@ export default function DioceseErpIndex() {
 
   // Form submit handler
   const handleSave = async () => {
-    let url = `/api/${dialogType}s`;
+    const getPluralType = (type) => {
+      if (type === 'deanery') return 'deaneries';
+      return type + 's';
+    };
+    let url = `/api/${getPluralType(dialogType)}`;
     let method = 'POST';
     let body = {};
 
@@ -587,13 +591,17 @@ export default function DioceseErpIndex() {
 
   // Delete handler
   const handleDelete = (type, id) => {
+    const getPluralType = (t) => {
+      if (t === 'deanery') return 'deaneries';
+      return t + 's';
+    };
     const capitalized = type[0].toUpperCase() + type.slice(1);
     askConfirmation(
       `Confirm Deletion`,
       `Are you sure you want to permanently delete this ${type}? This action cannot be undone.`,
       async () => {
         try {
-          const res = await authenticatedFetch(`/api/${type}s/${id}`, { method: 'DELETE' });
+          const res = await authenticatedFetch(`/api/${getPluralType(type)}/${id}`, { method: 'DELETE' });
           if (res.ok) {
             showToast(`${capitalized} deleted successfully`, 'success');
             fetchData();
