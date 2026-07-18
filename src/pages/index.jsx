@@ -539,6 +539,7 @@ export default function DioceseErpIndex() {
   const handleSave = async () => {
     const getPluralType = (type) => {
       if (type === 'deanery') return 'deaneries';
+      if (type === 'parish') return 'parishes';
       return type + 's';
     };
     let url = `/api/${getPluralType(dialogType)}`;
@@ -593,6 +594,7 @@ export default function DioceseErpIndex() {
   const handleDelete = (type, id) => {
     const getPluralType = (t) => {
       if (t === 'deanery') return 'deaneries';
+      if (t === 'parish') return 'parishes';
       return t + 's';
     };
     const capitalized = type[0].toUpperCase() + type.slice(1);
