@@ -79,6 +79,96 @@ import LockIcon from '@mui/icons-material/Lock';
 
 const drawerWidth = 260;
 
+function AvatarUploader({ value, onChange }) {
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'ml_default');
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/dh204qg0m/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      if (res.ok) {
+        const data = await res.json();
+        onChange(data.secure_url);
+      } else {
+        alert('Image upload failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Network error uploading image.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ position: 'relative' }}>
+        <Avatar 
+          src={value} 
+          sx={{ width: 90, height: 90, border: '2px solid rgba(99, 102, 241, 0.5)', cursor: 'pointer' }}
+          onClick={handleAvatarClick}
+        />
+        {uploading && (
+          <Box sx={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%', 
+            borderRadius: '50%', 
+            bgcolor: 'rgba(0,0,0,0.5)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
+            <CircularProgress size={30} sx={{ color: 'white' }} />
+          </Box>
+        )}
+        <IconButton 
+          onClick={handleAvatarClick}
+          sx={{ 
+            position: 'absolute', 
+            bottom: -5, 
+            right: -5, 
+            bgcolor: '#6366f1', 
+            color: 'white',
+            size: 'small',
+            p: 0.5,
+            '&:hover': { bgcolor: '#4f46e5' }
+          }}
+        >
+          <EditIcon sx={{ fontSize: 14 }} />
+        </IconButton>
+      </Box>
+      <Typography variant="caption" sx={{ mt: 1, color: 'text.secondary', fontWeight: 600 }}>
+        Click to upload photo
+      </Typography>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        onChange={handleFileChange}
+        accept="image/*"
+      />
+    </Box>
+  );
+}
+
 export default function DioceseErpIndex() {
   const { mode, toggleThemeMode } = useContext(ThemeModeContext);
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -86,7 +176,7 @@ export default function DioceseErpIndex() {
   // Auth Session States
   const [session, setSession] = useState(null);
   const [users, setUsers] = useState([]);
-  const [userForm, setUserForm] = useState({ username: '', password: '', role: 'Administrator' });
+  const [userForm, setUserForm] = useState({ username: '', password: '', role: 'Administrator', avatar_url: '' });
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   
@@ -153,7 +243,7 @@ export default function DioceseErpIndex() {
   const [deaneryForm, setDeaneryForm] = useState({ diocese_id: '', name: '', dean: '', description: '' });
   const [parishForm, setParishForm] = useState({ diocese_id: '', deanery_id: '', name: '', pastor: '', assistant_pastor: '', address: '', phone: '', email: '' });
   const [memberForm, setMemberForm] = useState({
-    parish_id: '', first_name: '', last_name: '', gender: 'Male', dob: '', email: '', phone: '', address: '', role: 'Laity',
+    parish_id: '', first_name: '', last_name: '', gender: 'Male', dob: '', email: '', phone: '', address: '', role: 'Laity', avatar_url: '',
     baptism_received: false, baptism_date: '', baptism_parish: '',
     communion_received: false, communion_date: '', communion_parish: '',
     confirmation_received: false, confirmation_date: '', confirmation_parish: '',
@@ -515,6 +605,7 @@ export default function DioceseErpIndex() {
         phone: item.phone || '',
         address: item.address || '',
         role: item.role || 'Laity',
+        avatar_url: item.avatar_url || '',
         baptism_received: item.baptism_received === 1,
         baptism_date: item.baptism_date || '',
         baptism_parish: item.baptism_parish || '',
@@ -730,7 +821,7 @@ export default function DioceseErpIndex() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {session && (
               <Box sx={{ 
-                px: 2, 
+                px: 1.5, 
                 py: 0.5, 
                 borderRadius: '20px', 
                 bgcolor: 'rgba(99, 102, 241, 0.12)', 
@@ -739,7 +830,8 @@ export default function DioceseErpIndex() {
                 alignItems: 'center',
                 gap: 1
               }}>
-                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
+                <Avatar src={session?.user?.avatar_url || session?.avatar_url} sx={{ width: 22, height: 22 }} />
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'success.main' }} />
                 <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.primary', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   {session?.user?.username || session?.username} ({session?.user?.role || session?.role})
                 </Typography>
@@ -1594,8 +1686,15 @@ export default function DioceseErpIndex() {
                           
                           return (
                             <TableRow key={m.id} hover>
-                              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>
-                                {m.first_name} {m.last_name}
+                              <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                  <Avatar src={m.avatar_url} sx={{ width: 35, height: 35, border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                                    {m.first_name[0].toUpperCase()}
+                                  </Avatar>
+                                  <Typography sx={{ fontWeight: 700, color: 'text.primary' }}>
+                                    {m.first_name} {m.last_name}
+                                  </Typography>
+                                </Box>
                               </TableCell>
                               <TableCell>{m.parish_name}</TableCell>
                               <TableCell>
@@ -1690,6 +1789,10 @@ export default function DioceseErpIndex() {
                     </Typography>
                     <form onSubmit={handleRegisterUserSubmit}>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                        <AvatarUploader 
+                          value={userForm.avatar_url} 
+                          onChange={(url) => setUserForm({ ...userForm, avatar_url: url })} 
+                        />
                         <TextField
                           label="Username"
                           required
@@ -1744,7 +1847,16 @@ export default function DioceseErpIndex() {
                         {users.map(u => (
                           <TableRow key={u.id} hover>
                             <TableCell sx={{ color: 'text.secondary' }}>#{u.id}</TableCell>
-                            <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{u.username}</TableCell>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Avatar src={u.avatar_url} sx={{ width: 32, height: 32, border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                                  {u.username[0].toUpperCase()}
+                                </Avatar>
+                                <Typography sx={{ fontWeight: 700, color: 'text.primary' }}>
+                                  {u.username}
+                                </Typography>
+                              </Box>
+                            </TableCell>
                             <TableCell>
                               <Box sx={{ 
                                 display: 'inline-block', 
@@ -2088,6 +2200,12 @@ export default function DioceseErpIndex() {
               <Grid item xs={12}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'secondary.light', mb: 1 }}>Profile Information</Typography>
               </Grid>
+              <Grid item xs={12}>
+                <AvatarUploader 
+                  value={memberForm.avatar_url} 
+                  onChange={(url) => setMemberForm({ ...memberForm, avatar_url: url })} 
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Parish Association</InputLabel>
@@ -2240,7 +2358,7 @@ export default function DioceseErpIndex() {
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
-              <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: '32px', fontWeight: 700, mb: 2, boxShadow: '0 4px 20px rgba(99,102,241,0.4)' }}>
+              <Avatar src={selectedMember.avatar_url} sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: '32px', fontWeight: 700, mb: 2, boxShadow: '0 4px 20px rgba(99,102,241,0.4)' }}>
                 {selectedMember.first_name[0]}{selectedMember.last_name[0]}
               </Avatar>
               <Typography variant="h5" sx={{ fontWeight: 800 }}>{selectedMember.first_name} {selectedMember.last_name}</Typography>
