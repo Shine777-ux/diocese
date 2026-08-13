@@ -349,28 +349,45 @@ export default function DioceseErpIndex() {
     }
   };
 
-  const fetchData = async () => {
+  const fetchDioceses = async () => {
     try {
-      const diocesesRes = await authenticatedFetch('/api/dioceses');
-      if (diocesesRes.ok) {
-        const diocesesData = await diocesesRes.json();
-        setDioceses(diocesesData);
-        // Default to first diocese if none is active
-        if (diocesesData.length > 0 && !activeDioceseId) {
-          setActiveDioceseId(diocesesData[0].id);
+      const res = await authenticatedFetch('/api/dioceses');
+      if (res.ok) {
+        const data = await res.json();
+        setDioceses(data);
+        if (data.length > 0 && !activeDioceseId) {
+          setActiveDioceseId(data[0].id);
         }
       }
-      
-      const deaneriesRes = await authenticatedFetch('/api/deaneries');
-      if (deaneriesRes.ok) setDeaneries(await deaneriesRes.json());
-      
-      const parishesRes = await authenticatedFetch('/api/parishes');
-      if (parishesRes.ok) setParishes(await parishesRes.json());
-      
-      const membersRes = await authenticatedFetch('/api/members');
-      if (membersRes.ok) setMembers(await membersRes.json());
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    } catch (err) {
+      console.error('Error fetching dioceses:', err);
+    }
+  };
+
+  const fetchDeaneries = async () => {
+    try {
+      const res = await authenticatedFetch('/api/deaneries');
+      if (res.ok) setDeaneries(await res.json());
+    } catch (err) {
+      console.error('Error fetching deaneries:', err);
+    }
+  };
+
+  const fetchParishes = async () => {
+    try {
+      const res = await authenticatedFetch('/api/parishes');
+      if (res.ok) setParishes(await res.json());
+    } catch (err) {
+      console.error('Error fetching parishes:', err);
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      const res = await authenticatedFetch('/api/members');
+      if (res.ok) setMembers(await res.json());
+    } catch (err) {
+      console.error('Error fetching members:', err);
     }
   };
 
@@ -443,11 +460,29 @@ export default function DioceseErpIndex() {
 
   useEffect(() => {
     if (session) {
-      fetchData();
-      fetchUsers();
+      if (activeSubTab === 'dashboard') {
+        fetchDioceses();
+        fetchDeaneries();
+        fetchParishes();
+        fetchMembers();
+      } else if (activeSubTab === 'dioceses') {
+        fetchDioceses();
+      } else if (activeSubTab === 'deaneries') {
+        fetchDioceses();
+        fetchDeaneries();
+      } else if (activeSubTab === 'parishes') {
+        fetchDioceses();
+        fetchDeaneries();
+        fetchParishes();
+      } else if (activeSubTab === 'members') {
+        fetchParishes();
+        fetchMembers();
+      } else if (activeSubTab === 'users') {
+        fetchUsers();
+      }
       fetchUserPermissions();
     }
-  }, [activeDioceseId, session]);
+  }, [activeSubTab, activeDioceseId, session]);
 
   useEffect(() => {
     if (session) {
@@ -676,7 +711,10 @@ export default function DioceseErpIndex() {
       if (res.ok) {
         setDialogOpen(false);
         showToast(`${dialogType[0].toUpperCase() + dialogType.slice(1)} saved successfully`, 'success');
-        fetchData();
+        if (dialogType === 'diocese') fetchDioceses();
+        else if (dialogType === 'deanery') fetchDeaneries();
+        else if (dialogType === 'parish') fetchParishes();
+        else if (dialogType === 'member') fetchMembers();
         if (selectedMember && dialogType === 'member' && editItem && selectedMember.id === editItem.id) {
           const updatedMemberRes = await authenticatedFetch(`/api/members/${editItem.id}`);
           if (updatedMemberRes.ok) {
@@ -709,7 +747,10 @@ export default function DioceseErpIndex() {
           const res = await authenticatedFetch(`/api/${getPluralType(type)}/${id}`, { method: 'DELETE' });
           if (res.ok) {
             showToast(`${capitalized} deleted successfully`, 'success');
-            fetchData();
+            if (type === 'diocese') fetchDioceses();
+            else if (type === 'deanery') fetchDeaneries();
+            else if (type === 'parish') fetchParishes();
+            else if (type === 'member') fetchMembers();
             if (selectedMember && selectedMember.id === id && type === 'member') {
               setProfileDrawerOpen(false);
               setSelectedMember(null);
