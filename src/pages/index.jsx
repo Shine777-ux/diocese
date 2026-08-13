@@ -303,7 +303,8 @@ export default function DioceseErpIndex() {
         setLoginError(err.detail || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
-      setLoginError('Could not connect to the authentication server.');
+      console.error("Login connection error:", error);
+      setLoginError(`Could not connect to the authentication server at: ${getAbsoluteUrl('/api/auth/login')}. Error details: ${error.message || error}`);
     }
   };
 
