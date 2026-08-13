@@ -251,9 +251,21 @@ export default function DioceseErpIndex() {
     holy_orders_received: false, holy_orders_date: '', holy_orders_parish: ''
   });
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  
+  const getAbsoluteUrl = (url) => {
+    if (url.startsWith('/api/')) {
+      // Remove trailing slash if any
+      const base = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+      return `${base}${url}`;
+    }
+    return url;
+  };
+
   const authenticatedFetch = async (url, options = {}) => {
+    const absUrl = getAbsoluteUrl(url);
     const savedSession = localStorage.getItem('diocese_erp_session');
-    if (!savedSession) return fetch(url, options);
+    if (!savedSession) return fetch(absUrl, options);
     
     try {
       const parsed = JSON.parse(savedSession);
@@ -262,9 +274,9 @@ export default function DioceseErpIndex() {
         ...options.headers,
         'Authorization': `Bearer ${parsed.token}`
       };
-      return fetch(url, { ...options, headers });
+      return fetch(absUrl, { ...options, headers });
     } catch (e) {
-      return fetch(url, options);
+      return fetch(absUrl, options);
     }
   };
 
@@ -276,7 +288,7 @@ export default function DioceseErpIndex() {
       return;
     }
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(getAbsoluteUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm)
