@@ -356,8 +356,8 @@ export default function DioceseErpIndex() {
       if (res.ok) {
         const data = await res.json();
         setDioceses(data);
-        if (data.length > 0 && !activeDioceseId) {
-          setActiveDioceseId(data[0].id);
+        if (data.length > 0) {
+          setActiveDioceseId(prev => prev || data[0].id);
         }
       }
     } catch (err) {
@@ -390,6 +390,31 @@ export default function DioceseErpIndex() {
     } catch (err) {
       console.error('Error fetching members:', err);
     }
+  };
+
+  const fetchBootstrap = async () => {
+    try {
+      const res = await authenticatedFetch('/api/bootstrap');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.dioceses) {
+          setDioceses(data.dioceses);
+          if (data.dioceses.length > 0) {
+            setActiveDioceseId(prev => prev || data.dioceses[0].id);
+          }
+        }
+        if (data.deaneries) setDeaneries(data.deaneries);
+        if (data.parishes) setParishes(data.parishes);
+        if (data.members) setMembers(data.members);
+        return;
+      }
+    } catch (err) {
+      console.warn('Bootstrap fetch failed, falling back to individual calls:', err);
+    }
+    fetchDioceses();
+    fetchDeaneries();
+    fetchParishes();
+    fetchMembers();
   };
 
   useEffect(() => {
@@ -462,10 +487,7 @@ export default function DioceseErpIndex() {
   useEffect(() => {
     if (session) {
       if (activeSubTab === 'dashboard') {
-        fetchDioceses();
-        fetchDeaneries();
-        fetchParishes();
-        fetchMembers();
+        fetchBootstrap();
       } else if (activeSubTab === 'dioceses') {
         fetchDioceses();
       } else if (activeSubTab === 'deaneries') {
@@ -483,7 +505,7 @@ export default function DioceseErpIndex() {
       }
       fetchUserPermissions();
     }
-  }, [activeSubTab, activeDioceseId, session]);
+  }, [activeSubTab, session]);
 
   useEffect(() => {
     if (session) {
