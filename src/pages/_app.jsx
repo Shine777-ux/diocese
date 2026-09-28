@@ -10,7 +10,7 @@ export const ThemeModeContext = createContext({
 });
 
 export default function App({ Component, pageProps }) {
-  const [mode, setMode] = useState('light');
+  const [mode, setMode] = useState('dark');
 
   // Read saved theme from localStorage on client-side mount
   useEffect(() => {

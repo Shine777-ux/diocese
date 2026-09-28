@@ -34,17 +34,17 @@ export const getTheme = (mode) => {
         dark: isDark ? '#ef4444' : '#991b1b',
       },
       background: {
-        default: isDark ? '#0b0f19' : '#e2e4d9', // Deep dark blue canvas / warm light canvas
-        paper: isDark ? '#111827' : '#ffffff',   // Dark card-paper background / clean white card-paper background
+        default: isDark ? '#181f2a' : '#e2e4d9', // Deep slate-navy canvas / warm light canvas
+        paper: isDark ? '#1e2533' : '#ffffff',   // 1st combination card & dialog paper
       },
       text: {
-        primary: isDark ? '#f8fafc' : '#1e293b',   // Bright text for dark / dark slate text for light
-        secondary: isDark ? '#94a3b8' : '#64748b', // Muted text
+        primary: isDark ? '#f8fafc' : '#1e293b',   // Bright crisp text for dark / dark slate for light
+        secondary: isDark ? '#94a3b8' : '#64748b', // Muted secondary text
         disabled: isDark ? '#475569' : '#94a3b8',
       },
       divider: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
       action: {
-        hover: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)',
+        hover: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
         selected: isDark ? 'rgba(255, 255, 255, 0.06)' : '#e8ebf5',
         disabledBackground: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)',
       }
@@ -55,7 +55,7 @@ export const getTheme = (mode) => {
       h2: { fontWeight: 700 },
       h3: { fontWeight: 700 },
       h4: { fontWeight: 700 },
-      h5: { fontWeight: 700, fontFamily: '"Georgia", serif' }, // Classic Georgia serif stats
+      h5: { fontWeight: 700, fontFamily: '"Georgia", serif' },
       h6: { fontWeight: 700 },
       body1: { fontSize: '0.9rem', lineHeight: 1.5 },
       body2: { fontSize: '0.85rem', lineHeight: 1.4 },
@@ -73,24 +73,108 @@ export const getTheme = (mode) => {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            backgroundColor: isDark ? '#0b0f19' : '#e2e4d9',
+            backgroundColor: isDark ? '#181f2a' : '#e2e4d9',
             color: isDark ? '#f8fafc' : '#1e293b',
           }
         }
       },
+      // Paper surface across all containers & panels
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'none',
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#1e293b',
+            borderRadius: 12,
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.35)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
+          }
+        }
+      },
+      // Cards across grids and dashboards
       MuiCard: {
         styleOverrides: {
           root: {
             backgroundImage: 'none',
-            backgroundColor: isDark ? '#111827' : '#ffffff',
-            borderRadius: 12,
-            boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.4)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
-            border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)',
-            transition: 'box-shadow 0.2s ease',
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            borderRadius: 14,
+            boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.35)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.05)',
+            transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
             position: 'relative',
             overflow: 'hidden',
           },
         },
+      },
+      MuiCardContent: {
+        styleOverrides: {
+          root: {
+            padding: '20px',
+            '&:last-child': {
+              paddingBottom: '20px',
+            }
+          }
+        }
+      },
+      // Dialog modal styling
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            backgroundImage: 'none',
+            borderRadius: 16,
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+            boxShadow: isDark ? '0 25px 50px -12px rgba(0, 0, 0, 0.75)' : '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden',
+          }
+        }
+      },
+      MuiDialogTitle: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#1e293b',
+            borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            padding: '18px 24px',
+          }
+        }
+      },
+      MuiDialogContent: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            color: isDark ? '#cbd5e1' : '#334155',
+            padding: '24px !important',
+            '&.MuiDialogContent-dividers': {
+              borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+              borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            }
+          }
+        }
+      },
+      MuiDialogContentText: {
+        styleOverrides: {
+          root: {
+            color: isDark ? '#94a3b8' : '#64748b',
+          }
+        }
+      },
+      MuiDialogActions: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#181f2a' : '#f8fafc',
+            borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            padding: '14px 24px',
+          }
+        }
+      },
+      MuiBackdrop: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? 'rgba(12, 17, 26, 0.75)' : 'rgba(15, 23, 42, 0.4)',
+            backdropFilter: 'blur(4px)',
+          }
+        }
       },
       MuiButton: {
         styleOverrides: {
@@ -120,7 +204,7 @@ export const getTheme = (mode) => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: isDark ? 'rgba(11, 15, 25, 0.95)' : 'rgba(226, 228, 217, 0.95)',
+            backgroundColor: isDark ? 'rgba(24, 31, 42, 0.95)' : 'rgba(226, 228, 217, 0.95)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
             backgroundImage: 'none',
@@ -133,7 +217,7 @@ export const getTheme = (mode) => {
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: isDark ? '#0c0f1a' : '#ffffff',
+            backgroundColor: isDark ? '#181f2a' : '#ffffff',
             borderRight: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
           }
         }
@@ -170,17 +254,28 @@ export const getTheme = (mode) => {
           }
         }
       },
+      // Data table & grid components
+      MuiTableContainer: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            borderRadius: 12,
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            backgroundImage: 'none',
+          }
+        }
+      },
       MuiTableHead: {
         styleOverrides: {
           root: {
-            backgroundColor: isDark ? '#141b27' : '#f1f2ec',
+            backgroundColor: isDark ? '#141a24' : '#f1f2ec',
           }
         }
       },
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.04)' : '1px solid rgba(0, 0, 0, 0.05)',
+            borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.05)',
             padding: '12px 16px',
           },
           head: {
@@ -188,27 +283,45 @@ export const getTheme = (mode) => {
             fontSize: '0.75rem',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
+            backgroundColor: isDark ? '#141a24' : '#f1f2ec',
             color: isDark ? '#94a3b8' : '#64748b',
+            borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
           },
           body: {
-            color: isDark ? '#cbd5e1' : '#1e293b', // Make sure table cells adapt dynamically to modes
+            color: isDark ? '#cbd5e1' : '#1e293b',
           }
         }
       },
       MuiTableRow: {
         styleOverrides: {
           root: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
             transition: 'background-color 0.15s ease',
             '&:hover': {
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.02) !important' : 'rgba(0, 0, 0, 0.01) !important',
+              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03) !important' : 'rgba(0, 0, 0, 0.02) !important',
             }
+          }
+        }
+      },
+      MuiTablePagination: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
+            color: isDark ? '#94a3b8' : '#64748b',
+          },
+          selectIcon: {
+            color: isDark ? '#94a3b8' : '#64748b',
+          },
+          actions: {
+            color: isDark ? '#94a3b8' : '#64748b',
           }
         }
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: isDark ? '#0e1524' : '#ffffff',
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
             borderRadius: 8,
             transition: 'all 0.15s ease',
             '& .MuiOutlinedInput-notchedOutline': {
@@ -242,7 +355,7 @@ export const getTheme = (mode) => {
       MuiAccordion: {
         styleOverrides: {
           root: {
-            backgroundColor: isDark ? '#111827' : '#ffffff',
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
             backgroundImage: 'none',
             border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
             borderRadius: '8px !important',
@@ -274,8 +387,44 @@ export const getTheme = (mode) => {
         styleOverrides: {
           root: {
             padding: '16px',
-            backgroundColor: isDark ? '#161f30' : '#fafafa',
+            backgroundColor: isDark ? '#181f2a' : '#fafafa',
             borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.04)',
+          }
+        }
+      },
+      MuiMenu: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            boxShadow: isDark ? '0 12px 32px rgba(0,0,0,0.5)' : '0 8px 24px rgba(0,0,0,0.08)',
+          }
+        }
+      },
+      MuiPopover: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDark ? '#1e2533' : '#ffffff',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+            boxShadow: isDark ? '0 12px 32px rgba(0,0,0,0.5)' : '0 8px 24px rgba(0,0,0,0.08)',
+          }
+        }
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            color: isDark ? '#f8fafc' : '#1e293b',
+            '&:hover': {
+              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
+            },
+            '&.Mui-selected': {
+              backgroundColor: isDark ? 'rgba(56, 189, 248, 0.15)' : 'rgba(71, 85, 105, 0.12)',
+              color: isDark ? '#38bdf8' : '#1e293b',
+              fontWeight: 600,
+              '&:hover': {
+                backgroundColor: isDark ? 'rgba(56, 189, 248, 0.22)' : 'rgba(71, 85, 105, 0.18)',
+              }
+            }
           }
         }
       }
